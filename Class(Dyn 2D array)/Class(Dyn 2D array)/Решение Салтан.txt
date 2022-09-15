@@ -1,0 +1,192 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include "Array.h"
+
+using namespace std;
+
+Array::Array()
+{
+	cout << "Constr" << endl;
+	Length = 1;
+	Width = 1;
+	Arr = new int* [Width]; // две строки в массиве
+	for (int count = 0; count < Length; count++)
+		Arr[count] = new int[Length];
+	for (size_t i = 0; i < Width; i++)//заполнение массива единицами
+	{
+		for (size_t i1 = 0; i1 < Width; i1++) {
+			Arr[i][i1] = 1;
+		}
+	}
+}
+
+Array::Array(unsigned int length, unsigned int width)
+{
+	cout << "Constr with params" << endl;
+	Length = length;
+	Width = width;
+	Arr = new int* [Width]; // две строки в массиве
+	for (int count = 0; count < Width; count++)
+		Arr[count] = new int[Length];
+
+	for (size_t i = 0; i < Width; i++)
+	{
+		for (int i1 = 0; i1 < Length; i1++) {
+
+		
+			cin >> Arr[i][i1];
+		}
+	}
+}
+
+
+
+Array::Array(Array& arr2)
+{
+	cout << "Copy constr" << endl;
+
+	Length = arr2.Length;
+	Width = arr2.Width;
+	Arr = new int* [Width]; // две строки в массиве
+	for (int count = 0; count < Width; count++)
+		Arr[count] = new int[Length];
+
+	for (size_t i = 0; i < Width; i++)
+	{
+		for (int i1 = 0; i1 < Length; i1++) {
+			Arr[i][i1] = arr2.Arr[i][i1];
+		}
+	}
+}
+
+Array::~Array()
+{
+	cout << "Destr" << endl;
+
+	for (int count = 0; count < Width; count++)
+		delete Arr[count];
+	delete[] Arr;
+}
+
+
+
+void Array::Set(unsigned int x, unsigned int y, int value)
+{
+	if (x >= 0 && x < Width && y >= 0 && y < Length)
+	{
+		Arr[x][y] = value;
+	}
+}
+
+// ГЕТТЕРЫ
+
+
+
+// методы класса, лучше писать с большой
+
+void Array::Print()
+{
+	//cout << "this: " << this << endl;
+
+	cout << " x:" << Width << endl;
+	cout << " y:" << Length << endl;
+	cout << " Array:" << endl;
+
+	for (size_t i = 0; i < Width; i++)
+	{
+		for (size_t i1 = 0; i1 < Length; i1++)
+		{
+			cout << " " << Arr[i][i1];
+		}
+		cout << endl;
+	}
+	cout << endl << endl;
+}
+
+
+
+long Array::Min()
+{
+	int min = Arr[0][0];
+	for (size_t i = 0; i < Width; i++)
+	{
+		for (int i1 = 0; i1 < Length; i1++) {
+			if (Arr[i][i1] < min)
+				min = Arr[i][i1];
+		}
+	}
+	return min;
+}
+
+int Array::Get(unsigned int x, unsigned int y)
+{
+	if (x >= 0 && x < Width && y >= 0 && y < Length)
+	{
+		return Arr[x][y];
+	}
+}
+
+bool Array::SaveToFile(const char* fileName)
+{
+	FILE* file = fopen(fileName, "wb");
+	
+	
+		
+	if (file != nullptr)
+
+	{
+		int Size[2];
+		Size[0] = Width;
+		Size[1] = Length;
+		fwrite(Size, sizeof(int), 2, file);
+		for (int i = 0; i < Width; i++) {
+			fwrite(Arr[i], sizeof(int), Length, file);
+		}
+		
+		fclose(file);
+		return true;
+	}
+	else return false;
+}
+
+// загружает записи из файла и возвращает количество загруженных записей (-1 в случае сбоя)
+bool Array::LoadFromFile(const char* fileName)
+{
+	// открытие файла с записями для чтения
+	FILE* file = fopen(fileName, "rb");
+
+	// проверка на успешность открытия файла
+	if (file != nullptr)
+	{
+		fseek(file, 0, SEEK_END);
+		long file_size = _ftelli64(file);
+		fseek(file, 0, SEEK_SET);
+
+		// получить размер нового массива из файла
+		long new_size = file_size / sizeof(int);
+
+
+		for (int count = 0; count < Width; count++)
+			delete Arr[count];
+		delete[] Arr;
+
+			// выделение памяти под новый массив
+		int Size[2];
+		fread(Size, sizeof(int), 2, file);
+		Width = Size[0];
+		Length = Size[1];
+
+		Arr = new int* [Width]; // две строки в массиве
+		for (int count = 0; count < Width; count++)
+			Arr[count] = new int[Length];
+
+		// чтение значений из файла
+		for(int i = 0; i < Width; i++)
+			fread(Arr[i], sizeof(int), Length, file);
+		fclose(file);
+
+		// возвратить новый размер БД (количество заполненных записей)
+		return true;
+	}
+	else return false;
+}

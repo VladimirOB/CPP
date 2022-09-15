@@ -1,0 +1,216 @@
+#include    <time.h>
+#include    <stdio.h>
+#include    <string.h>
+#include    <ctype.h>
+#include    <stdlib.h>
+#include    <stdarg.h>
+#include    <math.h> 
+
+typedef struct  // Rectangle 
+{
+  int p, q;     // значение координат
+  int r, s;     // назвать бы их ещё по понятнее
+  int area;     // площадь
+}Rec;
+
+
+#define randomize() srand(time(0))
+#define WIDTH_A  10
+#define HEIGHT_A 10
+
+
+int A[WIDTH_A][HEIGHT_A];
+
+//-----------------------------------------------------------------------------
+// Функция:			FillingMatrixA
+// Описание:		заполняет матрицу А нулями и единицами случайным образом
+//-----------------------------------------------------------------------------
+void PrintfMatrixA(int simvol)
+{ 
+  int row, col;
+  printf("\nPrintf matrix A\n   ");
+  for (col=0; col<HEIGHT_A; col++)
+    printf(" %i", col);
+  
+  printf("\n   ");
+  for (col=0; col<HEIGHT_A; col++)
+    printf("--");
+  for (row=0; row<WIDTH_A; row++)
+  {
+    printf("\n %i| ", row);
+    for (col=0; col<HEIGHT_A; col++)
+    {
+      if (A[row][col]==simvol)
+       printf("* ");
+      else
+       printf("%i ", A[row][col]);
+    } // end for (col
+  } // end for (row=
+} // end PrintfMatrixA
+
+//-----------------------------------------------------------------------------
+// Функция:			FillingMatrixA
+// Описание:		заполняет матрицу А нулями и единицами случайным образом
+//-----------------------------------------------------------------------------
+void FillingMatrixA()
+{ 
+  int row, col;
+  randomize();
+  printf("Filling matrix A\n   ");
+  for (col=0; col<HEIGHT_A; col++)
+    printf(" %i", col);
+   
+  printf("\n   ");
+  for (col=0; col<HEIGHT_A; col++)
+    printf("--");
+  for (row=0; row<WIDTH_A; row++)
+  {
+    printf("\n %i| ", row);
+    for (col=0; col<HEIGHT_A; col++)
+    {
+      A[row][col]=rand()%2;
+      printf("%i ", A[row][col]);
+    } // end for (col
+  } // end for (row=
+} // end FillingMatrixA
+
+//-----------------------------------------------------------------------------
+// Функция:			CalculationAreaRectangle
+// Описание:		вычисление максимальной площади прямоугольника 
+//              заполнение структуры Rec  
+// Переменные:  int row, int col - координаты верхней левой вершины прямоугольника
+// Возвращает:  указатель на структуру Rec 
+//-----------------------------------------------------------------------------
+Rec* CalculationAreaRectangle(int row, int col)
+{ 
+
+  int limitRow=WIDTH_A, limitCol=HEIGHT_A;  // ограничители
+  
+  int area;
+  int vRow,vCol;
+
+  static Rec maxRec;
+  maxRec.p=col;     // координаты верхней левой вершины
+  maxRec.r=row;
+  maxRec.area=0;    
+  
+ // printf("\npoint (%i,%i)  ", col,row );
+  vCol=col;
+  while(vCol<limitCol)
+  {
+    vRow=row;     // ходим по строками поэтому стартуем всегда с вершины    
+    
+    while ((vRow<limitRow)&&(A[vRow][vCol]==0))    // пока не вышли за границы и в строке идут нули
+      vRow++;
+//     printf("\n(%i,%i) limitRow=%i A[][]=%i", vCol,vRow, limitRow, A[vRow][vCol]);  
+    if (vRow<limitRow)    // если не дошли до ограничителя натолкнувшись на единицу,
+      limitRow=vRow;       // смещаем ограничитель
+    
+    if (limitRow-row==0)    
+    {
+  //    printf("\nbreak (%i,%i)  ",vCol , vRow);
+      break;
+    }
+   
+    vCol++;
+    area=(vRow-row)*(vCol-col);   // вычисляем получившуюся площадь
+//    printf("   (%i-%i)*(%i-%i)= %i>%i",vRow,row,vCol,col, area,maxRec.area );  
+    if (area>maxRec.area)       // если она больше максимальной
+    {                           // заполняем структуру новыми данными
+      maxRec.area=area;
+      maxRec.q=vCol-1;
+      maxRec.s=vRow-1;
+ //      printf(" input");
+//           printf("\n(%i,%i) ",maxRec.p, maxRec.r);
+//           printf("(%i,%i) ",maxRec.q, maxRec.r);
+//           printf("\n(%i,%i) ",maxRec.p, maxRec.s);
+//           printf("(%i,%i) ",maxRec.q, maxRec.s);
+//           printf("\narea:%i ",maxRec.area);
+//          getch();
+    }
+    
+   
+ // printf(" area %i", maxRec.area);
+  } // end while(vCol<limitCol)
+
+
+
+  return &maxRec;
+} // end CalculationAreaRectangle
+
+//-----------------------------------------------------------------------------
+// Функция:			ScanMaxArea
+// Описание:		поиск координат прямоугольника максимальной площади
+//-----------------------------------------------------------------------------
+Rec* ScanMaxArea()
+{
+  int  row, col;
+  Rec *rr;
+  static Rec maxRec;
+  maxRec.area=0;
+
+  for (row=0; row<WIDTH_A; row++)       // перебор всех элементов массива
+  {
+    // printf("\n");
+    for (col=0; col<HEIGHT_A; col++)
+    {
+      if (A[row][col]==0)               // если отыскали ноль вызываем 
+      {                                 // вычисляем площадь прямоугольника
+        rr=CalculationAreaRectangle(row,col);
+        if (rr->area>maxRec.area)
+        {
+          maxRec.area=rr->area;
+          maxRec.p=rr->p;
+          maxRec.q=rr->q;
+          maxRec.r=rr->r;
+          maxRec.s=rr->s;
+        }
+      }
+    } // end for (col
+   } // end for (row=
+  return &maxRec;
+}
+
+void main (void)
+{
+  Rec *rr;
+  int maxArea, nMaxArea, simvol=555;
+  int  row, col;
+
+  FillingMatrixA();
+  
+  rr=ScanMaxArea();
+  maxArea=rr->area;
+  
+  do
+  { 
+     A[rr->r][rr->p]=simvol;
+     printf("\n(%i,%i) ",rr->p, rr->r);
+     printf("(%i,%i) ",rr->q, rr->r);
+     printf("\n(%i,%i) ",rr->p, rr->s);
+     printf("(%i,%i) ",rr->q, rr->s);
+     printf("\narea:%i \n",rr->area);
+
+     for (col=rr->p; col<=rr->q; col++)       // перебор всех элементов массива
+     {
+       for (row=rr->r; row<=rr->s; row++)
+       {
+         A[row][col]=simvol;                  // помечаем прямоугольники 
+       } // end for (col
+     } // end for (row=
+
+     rr=ScanMaxArea();
+     nMaxArea=rr->area; 
+  } while (nMaxArea==maxArea);
+ 
+  
+  // красивенько выводим ( в Visual С++ у меня textcolor не фурычит
+  // поэтому как-то так)
+  
+     
+   PrintfMatrixA(simvol);
+
+   getch();
+   
+   
+} // end main

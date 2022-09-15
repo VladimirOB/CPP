@@ -1,0 +1,54 @@
+#include <iostream>
+#include <windows.h>
+using namespace std;
+
+int main() 
+{
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+
+	// Задача 1.
+    //Пользователь вводит 2  диапазона чисел,  
+   //Программа выводит и посчитывает сумму всех чисел, которые входят одновременно в 1-й и 2-й диапазон. 
+	cout << "Task 1" << endl;
+   int a, b, c, d, sum = 0;
+   cout << "Enter a:";
+   cin >> a;
+   cout << "Enter b:";
+   cin >> b;
+   cout << "Enter c:";
+   cin >> c;
+   cout << "Enter d:";
+   cin >> d;
+   if (a>b || c > b || c>d || a>d)
+	   cout << "Ranges don't intersect" << endl;
+   else
+   {
+	     if (c>a && d > b)
+			for (int i = c; i <= b; i++)
+		   {
+			   sum += i;
+			   cout << i << endl;
+		   }
+		 if (b > d && a >c)
+		   for (int i = a; i <= d; i++)
+		   {
+			  sum += i;
+			   cout << i << endl;
+		   }
+			 if (b > d && c>a)
+		   for (int i = c; i <= d; i++)
+		   {
+			   sum += i;
+			   cout << i << endl;
+		   }
+		 if (d > b && a>c)
+		   for (int i = a; i <= b; i++)
+		   {
+			   sum += i;
+			   cout << i << endl;
+		   }
+		    cout << "Sum =" << sum << endl;
+   }
+
+}

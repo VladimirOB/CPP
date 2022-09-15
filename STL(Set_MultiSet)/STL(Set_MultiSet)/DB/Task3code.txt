@@ -1,0 +1,79 @@
+void Task_3()
+{
+	/*
+	 3. Пользователь вводит имя файла, содержащего код на языке С++. Программа подсчитывает в коде количество использованных операторов if.
+	 В результирующий файл записывается количество и координаты каждого обнаруженного оператора.*/
+
+
+	char file_name_first[] = "DB/small.cpp", file_name_result[] = "DB/Task_3_Result.txt";
+	char file_name_first2[] = "DB/long.cpp", file_name_result2[] = "DB/Task_3_Result(long).txt";
+
+	vector <string> v;
+
+	string buffer;
+	char buff[200];
+
+	ifstream file_first(file_name_first2, ios::in);
+	ofstream file_second(file_name_result2, ios::out);
+	int str = 1;
+	int countIf = 0;
+	int pos = 0;
+	if (!file_first.fail())
+	{
+		while (!file_first.eof())
+		{
+			file_first.getline(buff, 199);
+			buffer = buff;
+			v.push_back(buffer);
+		}
+	}
+	if (!file_second.fail())
+	{
+		file_second << "Word search." << endl;
+		file_second << "____________________________" << endl;
+		file_second << "| Word | String | Position |" << endl;
+		file_second << "____________________________" << endl;
+		size_t found;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			//cout << v[i] << endl;
+			found = v[i].find("if");
+			if (found != string::npos) // npos -1, но по факту бесконечное положительное число.
+			{
+				buffer = v[i];
+				for (size_t i = 0; i < buffer.size(); i++)
+				{
+					//if ((buffer[i] == '\t' || buffer[i] == ' ' || buffer[i] == ')') && (buffer[i+1] == 'i' && buffer[i + 2] == 'f' &&(buffer[i+3]== ' ' || buffer[i+3] == '(')))
+					if (buffer[i] == 'i' && buffer[i + 1] == 'f')
+					{
+						pos = i;
+						if (pos < 10)
+						{
+							if (str < 100)
+								file_second << "|  If  | " << str << "     | " << pos << "        |" << endl;
+							else
+								file_second << "|  If  | " << str << "    | " << pos << "        |" << endl;
+						}
+						else
+						{
+							if (str < 100)
+								file_second << "|  If  | " << str << "     | " << pos << "       |" << endl;
+							else
+								file_second << "|  If  | " << str << "    | " << pos << "       |" << endl;
+						}
+						
+						cout << "If = " << str << "  .  " << pos << endl;
+					}
+				}
+				
+				countIf++;
+			}
+			str++;
+		}
+		file_second << "____________________________" << endl;
+		file_second << "Count of word = " << countIf << endl;
+	}
+	
+	file_first.close();
+	file_second.close();
+}

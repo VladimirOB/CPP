@@ -1,0 +1,5 @@
+hello - 2
+only - 0
+welcome - 0
+world - 0
+you - 0

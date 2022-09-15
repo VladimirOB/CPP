@@ -1,0 +1,9 @@
+allo - 1
+off - 1
+old - 1
+only - 1
+welcome - 1
+you - 2
+hello - 3
+world - 3
+on - 5
